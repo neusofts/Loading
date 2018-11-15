@@ -1,0 +1,30 @@
+{
+  "name": "layui-loading",
+  "version": "1.0.0",
+  "description": "jquery-loading组件，封装为layui组件",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-cache": "^0.4.6",
+    "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-jshint": "^2.0.4",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-pngquant": "^1.0.11",
+    "gulp-rename": "^1.2.2",
+    "gulp-smushit": "^1.2.0",
+    "gulp-uglify": "^2.1.2",
+    "jshint": "^2.9.4"
+  },
+  "devDependencies": {
+    "gulp-clean": "^0.3.2",
+    "gulp-imagemin": "^3.2.0",
+    "gulp-sequence": "^0.4.6",
+    "imagemin-pngquant": "^5.0.0"
+  },
+  "scripts": {
+    "test": "gulp copy"
+  },
+  "author": "",
+  "license": "ISC"
+}

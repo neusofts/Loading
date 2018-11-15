@@ -1,0 +1,549 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <title>Loading - demo</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../../../layui/css/layui.css?v=v2.4.3" media="all">
+    <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
+    <link rel=stylesheet href="https://codemirror.net/theme/eclipse.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .layout {
+            margin: 20px;
+            padding-left: 15px;
+            padding-right: 15px;
+            margin-bottom: 70px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .layout textarea {
+            height: 400px;
+        }
+
+        .layout input[disabled] ,
+        .layout .layui-select-disabled .layui-disabled {
+            background: #eee;
+        }
+
+        .layout .my-fixed button {
+            margin-right: 2em;
+            margin-top: 16px;
+        }
+
+        .layout .my-fixed {
+            position:fixed;
+            bottom:0;
+            left:0;
+            text-align: center;
+            width: 100%;
+            z-index: 111;
+        }
+
+        .layout fieldset {
+            margin-top: 20px;
+        }
+
+        .layui-form-item .layui-input-inline {
+            width: auto;
+        }
+
+        .layui-form-switch em {
+            padding-right: 3px !important;
+        }
+
+        input::-webkit-input-placeholder {color: #ccc;}    /* 使用webkit内核的浏览器 */
+        input:-moz-placeholder {color: #ccc;}              /* Firefox版本4-18 */
+        input::-moz-placeholder {color: #ccc;}             /* Firefox版本19+ */
+        input:-ms-input-placeholder {color: #ccc;}         /* IE浏览器 */
+
+        /* .my-margin {} */
+
+        .layout textarea.code {
+            display: none;
+        }
+
+        .layout .CodeMirror {
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>前言</legend>
+        </fieldset>
+
+        <div style="padding-bottom: 30px; color: #555;">
+            由于找不到一款完全符合自己需求的web-loading组件，没办法自己动手写一个得了，拓展jQuery插件，封装为layui组件。<br />
+            因时间短，组件及文档可能不是很完美，大家觉得有用就用用，有问题可以邮件给我：neusofts#neusoft.com（#换成@）
+        </div>
+    </div>
+    
+    <div class="layout" id="form">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>Loading组件 之 自定义配置及演示（兼容IE8+）</legend>
+        </fieldset>
+
+        <form class="layui-form" onsubmit="return false;" lay-filter="my-loading">
+            <div class="layui-form-item my-margin">
+                <b>遮罩层</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="my-show-ot">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">有无遮罩层</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="opacityDiv" lay-skin="switch" lay-filter="switch" checked lay-text="有遮罩层|无遮罩层">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">注：opacity为0时无遮罩层标签</div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">遮罩背景色</label>
+                    <div class="layui-input-inline" style="width: 120px;">
+                        <input type="text" name="background" value="#fff" placeholder="默认#fff" class="layui-input" id="bg-input">
+                    </div>
+                    <div class="layui-inline" style="left: -11px;">
+                        <div id="bg-btn"></div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">遮罩class名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="overlayClassName" placeholder="默认为空，多个以空格隔开" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">遮罩透明度</label>
+                    <div class="layui-input-inline">
+                        <select name="opacity" lay-filter="opacity" lay-verify="opacity">
+                            <option value="" disabled>选择透明度</option>
+                            <option value="0" disabled>0无遮罩(请使用“有无遮罩层”)</option>
+                            <option value="0.1">0.1</option>
+                            <option value="0.2">0.2</option>
+                            <option value="0.3">0.3</option>
+                            <option value="0.4">0.4</option>
+                            <option value="0.5">0.5</option>
+                            <option value="0.6" selected>0.6</option>
+                            <option value="0.7">0.7</option>
+                            <option value="0.8">0.8</option>
+                            <option value="0.9">0.9</option>
+                            <option value="1.0">1.0</option>
+                        </select>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">注：opacity为0时无遮罩层</div>
+                </div>
+            </div>
+
+            <div class="layui-form-item my-margin">
+                <b>图片</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">图片class名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="imgClassName" placeholder="默认为空，多个以空格隔开" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备选图片</label>
+                <div class="layui-input-inline">
+                    <select name="imgSrc" lay-filter="imgSrc">
+                        <option value="">选择备选编号 / 填写路径</option>
+                        <option value="null">不显示图片</option>
+                        <option value="0" selected>0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：默认编码为0，为null时无图片，可自定义图片路径</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">图片路径</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="imgSrcUrl" lay-verify="imgSrcUrl" disabled style="width: 400px"
+                        placeholder="自定义路径URL" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：此配置默认备选编号为0，值为null时无图片</div>
+            </div>
+
+            <div class="layui-form-item my-margin">
+                <b>文本</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="my-show-ot">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">显示文本</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="text" placeholder="默认为空，为空则不创建文本标签" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">文本Css</label>
+                    <div class="layui-input-inline" style="width: 500px;">
+                        <input type="text" name="textCss" placeholder="默认为空，格式{color: '#000'}" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">注：默认为空，格式{color: '#000'}</div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">文本class名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="textClassName" placeholder="默认为空，多个以空格隔开" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item my-margin">
+                <b>回调</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">回调函数</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="cb" value="beforeShow" title="显示前">
+                    <input type="checkbox" name="cb" value="afterShow" title="显示后">
+                    <input type="checkbox" name="cb" value="afterHide" title="隐藏后">
+                    <input type="checkbox" name="cb" value="afterHideAll" title="全部隐藏后">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：“隐藏后”的回调同样对“销毁”有效</div>
+            </div>
+
+            <div class="layui-form-item my-margin">
+                <b>其它</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">单击关闭</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="clickHide" value="1" title="关闭">
+                    <input type="radio" name="clickHide" value="0" checked title="不关闭">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：单击关闭loading，遮罩、图片、文本均有效（一般配合回调使用）</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">Top偏移量</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="offsetTop" value="0" placeholder="默认为0" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：默认为0，自定义图片、文本的top偏移量（针对图片和文本同时显示且两者绝对居中的微调场景）</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">动画时长</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="animateTime" value="600" placeholder="默认为600" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：默认为600，为0时关闭动画效果</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">遮罩z-index</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="overlayZIndex" value="19999999" placeholder="默认为19999999" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：默认为19999999（1,000,000），同时imgZIndex = overlayZIndex + 1</div>
+            </div>
+
+            <div class="layui-form-item my-margin">
+                <b>生成配置</b>
+                <hr class="layui-bg-green">
+            </div>
+
+            <div class="layui-form-item layui-form-text" id="my-show-1">
+                <label class="layui-form-label">自定义配置 / <span style="color:red">默认预览区</span></label>
+                <div class="layui-input-block">
+                    <textarea placeholder="生成您的自定义配置" id="textarea" class="layui-textarea" readonly name="setting">正在生成自定义配置...</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item my-fixed">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit="" lay-filter="my-submit">预览配置效果</button>
+                    <button class="layui-btn layui-btn-danger" id="my-reset">重置全部设置</button>
+                    <button class="layui-btn layui-btn-normal" id="my-close-all">关闭所有Loading</button>
+                    <button class="layui-btn layui-btn-primary" id="my-body">按配置全屏loading(3s)</button>
+                    <button class="layui-btn layui-btn-primary" id="my-layer">按配置layer中loading</button>
+                    <button class="layui-btn layui-btn-primary" id="my-more">按配置多个区域loading</button>
+                    <button class="layui-btn layui-btn-warm" id="my-demo">固定效果loading</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="layout">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>全局配置</legend>
+        </fieldset>
+        <div style="margin-bottom: 10px;">
+<textarea class="code auto-code">
+/* 更新全局配置 并执行 show方法 */
+$(element).loading({ /* 全局配置 */ });
+
+// 配置说明
+options = {
+    overlayClassName: ''            // 类型String，自定义遮罩层className，可多个，默认空String
+    , imgClassName: ''              // 类型String，自定义image的className，可多个，默认空String
+    , background: '#fff'            // 类型String，自定义遮罩层背景色，默认#fff
+    , opacity: 0.6                  // 类型Number，自定义遮罩层的透明度，默认0.6，注：为0时无遮罩层
+    , text: ''                      // 类型String，自定义loading文本，默认空String，注：非空时参考offsetTop设置
+    , textCss: {}                   // 类型Object，自定义loading文本样式，默认空{}
+    , textClassName: ''             // 类型String，自定义文本的className，可多个，默认空String
+    , offsetTop: 0                  // 类型Number，自定义图片+文本模式的top偏移量，注：text为空时无需设置offsetTop
+    , imgSrc: 0                     // 类型String|null|Number，自定义loading图片，默认为图片序列的0索引（共0-10），可自定义url路径，注：为null时无图片
+    , beforeShow: function () {}    // 类型Function，自定义loading显示前的回调，默认空Function，参数1=this，参数2=jQuery
+    , afterShow: function () {}     // 类型Function，自定义loading显示后的回调，默认空Function，参数1=this，参数2=jQuery，参数3=$loading
+    , imgZIndex: 19999999+1         // 类型Number，自定义图片的z-index值，默认19999999+1
+    , overlayZIndex: 19999999       // 类型Number，自定义遮罩层的z-index值，默认19999999
+    , afterHide: function () {}     // 类型Function，自定义loading隐藏/销毁后的回调，默认空Function，参数1=this，参数2=jQuery，参数3=$loading(销毁时无参数3)
+    , afterHideAll: function () {}  // 类型Function，自定义全部loading隐藏/销毁后的回调，默认空Function，参数1=this，参数2=jQuery，参数3=$loading(销毁时无参数3)
+    , animateTime: 600              // 类型Number，自定义loading显示/隐藏的动画时长，默认600毫秒，注：为0时无动画
+    , clickHide: false              // 类型Boolean，自定义单击loading遮罩层/图片/文字是否隐藏loading，默认false
+}</textarea>
+        </div>
+    </div>
+
+    <div class="layout">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>回调</legend>
+        </fieldset>
+
+        <div class="layui-tab layui-tab-brief" lay-filter="code-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">beforeShow</li>
+                <li>afterShow</li>
+                <li>afterHide</li>
+                <li>afterHideAll</li>
+            </ul>
+
+            <div class="layui-tab-content" style="padding-bottom: 0;">
+                <div class="layui-tab-item layui-show">
+<textarea class="code auto-code">
+// loading显示之前的回调
+var loading = $(element).loading('show', {
+    /* 私有配置 */
+    beforeShow: function (loading, $obj) {
+        // loading == this;
+        // $obj == $(element);
+        // 回调内容
+    }
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// loading显示之后的回调
+var loading = $(element).loading('show', {
+    /* 私有配置 */
+    afterShow: function (loading, $obj, $loading) {
+        // loading == this;
+        // $obj == $(element);
+        // $loading == $(div,img,text);
+        // 回调内容
+    }
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// loading隐藏之后的回调
+var loading = $(element).loading('show', {
+    /* 私有配置 */
+    afterHide: function (loading, $obj, $loading?) {
+        // loading == this;
+        // $obj == $(element);
+        // $loading? == $(div,img,text); 销毁时无此参数
+        // 回调内容
+    }
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// loading全部隐藏之后的回调
+var loading = $(element).loading('show', {
+    /* 私有配置 */
+    afterHideAll: function (loading, $obj, $loading?) {
+        // loading == this;
+        // $obj == $(element);
+        // $loading? == $(div,img,text); 全部销毁时无此参数
+        // 回调内容
+    }
+});</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>方法</legend>
+        </fieldset>
+
+        <div class="layui-tab layui-tab-brief" lay-filter="code-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">show()</li>
+                <li>toggle()</li>
+                <li>hide()</li>
+                <li>hideAll()</li>
+                <li>destroy()</li>
+                <li>destroyAll()</li>
+            </ul>
+
+            <div class="layui-tab-content" style="padding-bottom: 0;">
+                <div class="layui-tab-item layui-show">
+<textarea class="code auto-code">
+/*
+- 可以直接jQuery对象调用，也可以创建一个loading对象，以备用；
+- 注：如果是jQuery对象数组，则返回的loading也是对应的对象数组；
+- 注：若jQuery数组中包含body，则默认只对body有效（body最好单独调用）；
+- 注：destroy/destroyAll后loading对象仍可调用show等方法；
+- 更详尽的说明，请查看源码中的注释；
+*/
+
+// show（loading.show()不支持链式调用）
+var loading = $(element).loading('show', { /* 私有配置 */ });</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// hide <--> show
+$(element).loading('toggle');
+
+// 或者
+loading.toggle(); // 支持链式调用</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// hide
+$(element).loading('hide');
+
+// 或者
+loading.hide(); // 支持链式调用</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// hideAll
+$(element).loading('hideAll');
+
+// 或者
+loading.hideAll(); // 支持链式调用</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// destroy（注：为避免切换页面兼容性，配合onload的loading隐藏建议使用destroy注销对象）
+$(element).loading('destroy');
+
+// 或者
+loading.destroy(); // 支持链式调用</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+// destroyAll
+$(element).loading('destroyAll');
+
+// 或者
+loading.destroyAll(); // 支持链式调用</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>事件</legend>
+        </fieldset>
+
+        <div class="layui-tab layui-tab-brief" lay-filter="code-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">show</li>
+                <li>hide</li>
+                <li>hideAll</li>
+                <li>destroy</li>
+                <li>destroyAll</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+<textarea class="code auto-code">
+$(element).on('lay-loading.show', function (event, loadingObj) {
+    // 监听show事件的回调
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+$(element).on('lay-loading.hide', function (event, loadingObj) {
+    // 监听hide事件的回调
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+$(element).on('lay-loading.hideAll', function (event, loadingObj) {
+    // 监听hideAll事件的回调
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+$(element).on('lay-loading.destroy', function (event, loadingObj) {
+    // 监听destroy事件的回调
+});</textarea>
+                </div>
+                <div class="layui-tab-item">
+<textarea class="code">
+$(element).on('lay-loading.destroyAll', function (event, loadingObj) {
+    // 监听destroyAll事件的回调
+});</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="../../../layui/layui.all.js?v=v2.4.3" charset="utf-8"></script>
+<script src="../index.js?v=v1.0.0" charset="utf-8"></script>
+
+<script src="http://codemirror.net/lib/codemirror.js"></script>
+<script src="http://codemirror.net/mode/xml/xml.js"></script>
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+<script src="http://codemirror.net/mode/css/css.js"></script>
+<script src="http://codemirror.net/mode/htmlmixed/htmlmixed.js"></script>
+<script src="http://codemirror.net/addon/selection/active-line.js"></script>
+<script src="http://codemirror.net/addon/edit/matchbrackets.js"></script>
+
+<script src='http://codemirror.net/addon/hint/show-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/javascript-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/sql-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/html-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/xml-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/anyword-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/css-hint.js'></script>
+<script src='http://codemirror.net/addon/hint/show-hint.js'></script>
+
+</html>
