@@ -95,6 +95,7 @@ gulp.task('minJs', function() {
 
     return gulp.src(jsSrc)
         .pipe(cache(minJs({
+            // unicode: false,
             mangle:true,
             compress:true,
             preserveComments: false,
