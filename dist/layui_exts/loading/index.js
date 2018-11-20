@@ -1,1 +1,421 @@
-layui.config({version:"v2.4.3",debug:!0,base:"../js/"}).extend({loading:"../loading"}).use(["jquery","colorpicker","form","element","laytpl","layedit","laydate","loading"],function(){function e(e,t){var i={},o=!1,n=e.serializeArray();return r.each(n,function(e,t){"imgSrcUrl"===t.name?o=t.value:parseInt(t.value)||0===parseInt(t.value)?i[t.name]=parseFloat(t.value):"cb"===t.name?i[t.value]=f[t.value]:i[t.name]=r.trim(t.value)}),!1!==o?i.imgSrc=o:"null"===i.imgSrc&&(i.imgSrc=null),void 0===i.opacity&&(i.opacity=0),0===i.opacity&&null===i.imgSrc&&""===i.text&&(i.text="\u906e\u7f69\u5c42\u3001\u56fe\u7247\u3001\u6587\u672c\u81f3\u5c11\u5f97\u5b58\u5728\u4e00\u9879\uff08\u5355\u51fb\u5173\u95ed\uff09",i.textCss={color:"red"},i.clickHide=1),i.textCss&&(i.textCss=new Function("return"+i.textCss)()),i.imgZIndex=i.overlayZIndex+1,r.each(i,function(e,t){(void 0===f[e]||f[e]===t&&"function"!=typeof f[e])&&delete i[e]}),t?function(e){return JSON.stringify(e,function(e,t){return"function"==typeof t?Function.prototype.toString.call(t):t},2).replace(/"function/g,"function").replace(/ }"/g," }")}(i):i}function t(e){CodeMirror.fromTextArea(e,{mode:"javascript",theme:"eclipse",extraKeys:{Tab:"autocomplete"},styleActiveLine:!0,smartIndent:!0,matchBrackets:!0,readOnly:!0})}function i(e,t){return r(document).scrollTop(r(e).offset().top-30),t&&l.tips(t,e,{tips:[3,"#c95050"],time:5e3}),t}function o(e,t){return e?r.ajax({url:e,data:t||{},async:!1}).responseText:void 0}var n,a=layui.form,r=layui.jquery,l=layui.layer,s=layui.element,c=layui.laytpl,u=layui.layedit,m=layui.laydate,d=layui.colorpicker,f={overlayClassName:"",imgClassName:"",background:"#fff",opacity:.6,text:"",textCss:"",textClassName:"",offsetTop:0,imgSrc:0,beforeShow:function(){l.msg("\u8fd9\u662f \u201c\u663e\u793a\u4e4b\u524d\u201d \u7684\u56de\u8c03")},afterShow:function(){setTimeout(function(){l.msg("\u8fd9\u662f \u201c\u663e\u793a\u4e4b\u540e\u201d \u7684\u56de\u8c03\uff08\u4e3a\u907f\u514d\u91cd\u53e0\u6b64\u5904\u5df2\u8bbe\u7f6e\u5ef6\u8fdf1s\uff09")},1e3)},imgZIndex:2e7,overlayZIndex:19999999,afterHide:function(){l.msg("\u8fd9\u662f \u201c\u9690\u85cf\u4e4b\u540e\u201d \u7684\u56de\u8c03")},afterHideAll:function(){l.msg("\u8fd9\u662f \u201c\u5168\u90e8\u9690\u85cf\u4e4b\u540e\u201d \u7684\u56de\u8c03")},animateTime:600,clickHide:0},y=r(window).loading("show",{opacity:.7,imgSrc:9,text:"\u6b63\u5728\u52a0\u8f7d\u7b2c\u4e09\u65b9\u9ad8\u4eae\u7ec4\u4ef6...",textCss:{color:"#666"},afterHide:function(){l.msg("\u9875\u9762\u52a0\u8f7d\u5b8c\u6210\uff0c\u8bf7\u5f00\u59cb\u5427\uff01")},offsetTop:16});a.on("submit(my-submit)",function(t){i(r("#my-show-1")[0]);var o=e(r("form"));return r("#my-show-1").loading("show",o),!1}),d.render({elem:"#bg-btn",color:"#fff",done:function(e){r("#bg-input").val(e)}}),m.render({elem:"#date"}),m.render({elem:"#date1"});var p=u.build("LAY_demo_editor");a.verify({opacity:function(e,t){if(!e&&!t.disabled)return i(t.nextSibling,"\u6709\u906e\u7f69\u5c42\u65f6\u8bf7\u8bbe\u7f6e\u201c\u906e\u7f69\u900f\u660e\u5ea6\u201d")},imgSrcUrl:function(e,t){if(!r.trim(e)&&!t.disabled)return t.value="",i(t,"\u5907\u9009\u56fe\u7247\u672a\u9009\u65f6\u8bf7\u8bbe\u7f6e\u201c\u56fe\u7247\u8def\u5f84\u201d")},test2:[/(.+){6,12}$/,"\u5bc6\u7801\u5fc5\u987b6\u523012\u4f4d"],test3:function(e){u.sync(p)}}),a.on("select(imgSrc)",function(e){var t=r('input[name="imgSrcUrl"]')[0];e.value?(t.disabled=!0,l.tips("\u6b64\u65f6\u4e0d\u53ef\u914d\u7f6eURL",t,{tips:[3,"#c95050"],time:3e3})):(t.disabled=!1,l.tips("\u53ef\u4ee5\u81ea\u5b9a\u4e49URL\u4e86",t,{tips:[3,"green"],time:3e3,end:function(){r(t).focus()}}))}),a.on("switch(switch)",function(e){var t=r('select[name="opacity"]')[0],i=r('input[name="overlayClassName"]')[0],o=r("#bg-input")[0],n=e.othis[0].innerText;i.disabled=o.disabled=t.disabled="\u6709\u906e\u7f69\u5c42"!==n,l.tips(n,e.othis,{tips:[1,"#000"]}),a.render("select")}),r("#my-close-all").on("click.closeAll",function(){r(window).loading("hideAll")}),r("#my-body").on("click.body",function(){var t=r(window).loading("show",e(r("form")));setTimeout(function(){t.hide()},3e3)}),r("#my-demo").on("click.demo",function(){i(r("#my-show-1")[0]);var e=r("#my-show-1").loading("show",{background:"green",imgSrc:null,textCss:{color:"#fff"},text:"\u6570\u636e\u5904\u7406\u4e2d..."});setTimeout(function(){e.hide()},3e3)}),r("#my-reset").on("click.reset",function(){l.msg("\u786e\u5b9a\u91cd\u7f6e\u60a8\u7684\u914d\u7f6e\u5417\uff1f",{time:0,shade:.5,anim:6,btn:["\u786e\u5b9a","\u53d6\u6d88"],yes:function(e){l.close(e),r("[disabled]").attr("disabled",!1),r('input[name="imgSrcUrl"]')[0].disabled=!0,setTimeout(function(){r("form")[0].reset()},50)}})}),r("#my-more").on("click.more",function(){r("div.my-show-ot").loading("show",e(r("form"))),setTimeout(function(){r(document).scrollTop(r("div.my-show-ot").offset().top),l.tips("\u591a\u533a\u57df\u663e\u793a\u6548\u679c",r("div.my-show-ot")[0],{tips:[1,"orange"],time:4e3,tipsMore:!0}),l.tips("\u591a\u533a\u57df\u663e\u793a\u6548\u679c",r("div.my-show-ot")[1],{tips:[1,"orange"],time:4e3,tipsMore:!0})},200)}),r("#my-layer").on("click.layer",function(){var t={title:"\u8eab\u4efd\u9a8c\u8bc1",user:{value:"admin",title:"\u5e10\u53f7",placeholder:"\u8bf7\u8f93\u5165\u7528\u6237\u540d"},pw:{value:"123456",title:"\u5bc6\u7801",placeholder:"\u8bf7\u8f93\u5165\u5bc6\u7801",info:"\u5bc6\u7801\u957f\u5ea66\uff5e18\u4f4d"},btn:{submit:"\u63d0\u4ea4",reset:"\u53d6\u6d88"}};n||(n=o("form.tpl")),c(n).render(t,function(i){var o=l.open({type:1,title:t.title,shade:.6,anim:1,btn:[t.btn.submit,t.btn.reset],content:i,yes:function(t,i){var o=r("#layer-form").closest("div.layui-layer").loading("show",e(r("form")));setTimeout(function(){o.hide()},3e3)}});l.style(o,{width:"470px"}),setTimeout(function(){l.tips("\u70b9\u6b64\u8bd5\u8bd5",r("a.layui-layer-btn0")[0],{tips:[1,"orange"],time:2e3})},500)})}),s.on("tab(code-tab)",function(e){var i=r(e.elem[0]).find(".layui-tab-item:eq("+e.index+")"),o=i.find(".code")[0];!i.find(".CodeMirror").size()&&t(o)}),r(function(){r("textarea.auto-code").each(function(e,i){t(i)});var i="";setInterval(function(){i!=e(r("form"),"format")&&(r("#textarea").val(e(r("form"),"format")),r("#my-show-1").find(".CodeMirror").remove(),t(r("#textarea")[0]),i=e(r("form"),"format"))},1500),r(window).on("load",function(){y.destroy()})})});
+layui.config({
+	version: 'v2.4.3',
+	debug: true,
+	base: '../js/'
+}).extend({
+	loading: '../loading'
+}).use(['jquery', 'colorpicker', 'form', 'element', 'laytpl', 'layedit', 'laydate', 'loading'], function () {
+	var form = layui.form
+		, $ = layui.jquery
+		, layer = layui.layer
+		, element = layui.element
+		, laytpl = layui.laytpl
+		, layedit = layui.layedit
+		, laydate = layui.laydate
+		, colorpicker = layui.colorpicker;
+
+	var tplLogin
+	, baseSetting = {
+		'overlayClassName': '',
+		'imgClassName': '',
+		'background': '#fff',
+		'opacity': 0.6,
+		'text': '',
+		'textCss': '',
+		'textClassName': '',
+		'offsetTop': 0,
+		'imgSrc': 0,
+		'beforeShow': function () { layer.msg('这是 “显示之前” 的回调'); },
+		'afterShow': function () { setTimeout(function () { layer.msg('这是 “显示之后” 的回调（为避免重叠此处已设置延迟1s）'); }, 1e3); },
+		'imgZIndex': 19999999 + 1,
+		'overlayZIndex': 19999999,
+		'afterHide': function () { layer.msg('这是 “隐藏之后” 的回调'); },
+		'afterHideAll': function () { layer.msg('这是 “全部隐藏之后” 的回调'); },
+		'animateTime': 600,
+		'clickHide': 0
+	}
+	, onloadLoading = $(window).loading('show', {
+		"opacity": 0.7,
+		"imgSrc": 9,
+		"text": "正在加载第三方高亮组件...",
+		"textCss": {
+			"color": "#666"
+		},
+		"afterHide": function () { layer.msg('页面加载完成，请开始吧！'); },
+		"offsetTop": 16
+	});
+
+	/* 
+	(index):352 0 {name: "opacityDiv", value: "on"}                             // opacityDiv
+	(index):352 1 {name: "background", value: "#c55353"}
+	(index):352 2 {name: "overlayClassName", value: "divclass1 divclass2"}
+	(index):352 3 {name: "opacity", value: "0.5"}
+	(index):352 4 {name: "imgClassName", value: "imgclass1 imgclass2"}
+	(index):352 5 {name: "imgSrc", value: ""}
+	(index):352 6 {name: "imgSrcUrl", value: "../../loading.gif"}               // imgSrcUrl
+	(index):352 7 {name: "text", value: "正在处理"}
+	(index):352 8 {name: "textCss", value: "{color: '#fff'}"}
+	(index):352 9 {name: "textClassName", value: "textclass1 textclass2"}
+	(index):352 10 {name: "cb", value: "beforeShow"}
+	(index):352 11 {name: "cb", value: "afterShow"}
+	(index):352 12 {name: "cb", value: "afterHide"}
+	(index):352 13 {name: "cb", value: "afterHideAll"}
+	(index):352 14 {name: "clickHide", value: "1"}
+	(index):352 15 {name: "offsetTop", value: "22"}
+	(index):352 16 {name: "animateTime", value: "800"}
+	(index):352 17 {name: "overlayZIndex", value: "199999991"}
+	(index):352 18 {name: "setting", value: "正在生成配置..."}
+	 */
+
+	function getSetting($obj, doFormat) {
+		var arrNew = {};
+		var imgSrcUrl = false;
+		var arr = $obj.serializeArray();
+		var format = function (options) {
+			var optionsStr = (JSON.stringify(options, function (k, v) {
+				if (typeof v === 'function') {
+					return Function.prototype.toString.call(v);
+				}
+
+				return v;
+			}, 2));
+
+			return optionsStr.replace(/"function/g, 'function').replace(/ }"/g, ' }');
+		}
+
+		$.each(arr, function (k, obj) {
+			if (obj.name === 'imgSrcUrl') {
+				imgSrcUrl = obj.value;
+			} else {
+				if (!parseInt(obj.value) && parseInt(obj.value) !== 0) {
+					if (obj.name === 'cb') {
+						arrNew[obj.value] = baseSetting[obj.value];
+					} else {
+						arrNew[obj.name] = $.trim(obj.value);
+					}
+				} else {
+					arrNew[obj.name] = parseFloat(obj.value);
+				}
+			}
+		});
+
+		if (imgSrcUrl !== false) {
+			arrNew.imgSrc = imgSrcUrl;
+		} else if (arrNew.imgSrc === 'null') {
+			arrNew.imgSrc = null;
+		}
+
+		if (arrNew.opacity === undefined) {
+			arrNew.opacity = 0;
+		}
+
+		if (arrNew.opacity === 0 && arrNew.imgSrc === null && arrNew.text === '') {
+			arrNew.text = '遮罩层、图片、文本至少得存在一项（单击关闭）';
+			arrNew.textCss = { color: 'red' };
+			arrNew.clickHide = 1;
+		}
+
+		if (arrNew.textCss) {
+			arrNew.textCss = new Function("return" + arrNew.textCss)();
+		}
+
+		arrNew.imgZIndex = arrNew.overlayZIndex + 1;
+
+		$.each(arrNew, function (key, value) {
+			if (baseSetting[key] === undefined || (baseSetting[key] === value && typeof baseSetting[key] !== 'function')) {
+				delete arrNew[key];
+			}
+		});
+
+		// delete arrNew.opacityDiv;
+		// delete arrNew.imgSrcUrl;
+		// delete arrNew.setting;
+		// delete arrNew.user;
+		// delete arrNew.pw;
+
+		return doFormat ? format(arrNew) : arrNew;
+	}
+
+	function codePrint(obj) {
+		CodeMirror.fromTextArea(obj, {
+			mode:'javascript',						// 编辑器语言
+			theme:'eclipse', 						// 编辑器主题
+			extraKeys: {"Tab": "autocomplete"},		// ctrl可以弹出选择项 
+			// lineNumbers: true,					// 是否使用行号
+			styleActiveLine: true,
+			smartIndent: true,						// 自动缩进是否开启
+			matchBrackets: true,
+			readOnly: true
+		});
+	}
+
+	function setScrollTop(obj, text) {
+		$(document).scrollTop($(obj).offset().top - 30);
+		text && layer.tips(text, obj, {
+			tips: [3, '#c95050'], time: 5e3
+		});
+		return text;
+	}
+
+	function getTpl(url, paramsObj) {
+		if (!url) {
+			return;
+		} else {
+			return $.ajax({
+				url: url,
+				data: paramsObj || {},
+				async: false
+				// jsonp: '$callback',
+				// dataType: 'jsonp'
+			}).responseText;
+		}
+	}
+
+	//表单初始赋值<表单设置>
+	// form.val('my-loading', {
+	//     "opacityDiv": "有遮罩层"
+	//     , "background": "#fff"
+	//     , "opacity": 0.6
+	//     , "imgSrc": 0
+	//     // , "like[write]": true
+	//     , "clickHide": '0'
+	//     , "offsetTop": 0
+	//     , "animateTime": 600
+	//     , "overlayZIndex": 19999999
+	//     , "setting": "正在生成配置..." // 默认配置信息，计算赋值
+	// });
+
+	// 监听表单提交
+	form.on('submit(my-submit)', function (data) {
+		setScrollTop($('#my-show-1')[0]);
+
+		// layer.alert(JSON.stringify(data.field), {
+		//     title: '最终的提交信息'
+		// });
+
+		var options = getSetting($('form'));
+		$('#my-show-1').loading('show', options);
+
+		return false;
+	});
+
+	// 颜色选择器
+	colorpicker.render({
+		elem: '#bg-btn'
+		, color: '#fff'
+		, done: function (color) {
+			$('#bg-input').val(color);
+		}
+	});
+
+	// 日期
+	laydate.render({
+		elem: '#date'
+	});
+
+	laydate.render({
+		elem: '#date1'
+	});
+
+	// 创建一个编辑器
+	var editIndex = layedit.build('LAY_demo_editor');
+
+	// 配置表单验证规则
+	form.verify({
+		opacity: function (value, obj) {
+			if (!value && !obj.disabled) {
+				return setScrollTop(obj.nextSibling, '有遮罩层时请设置“遮罩透明度”');
+			}
+		}
+		, imgSrcUrl: function (value, obj) {
+			if (!$.trim(value) && !obj.disabled) {
+				obj.value = '';
+				return setScrollTop(obj, '备选图片未选时请设置“图片路径”');
+			}
+		}
+		, test2: [/(.+){6,12}$/, '密码必须6到12位']
+		, test3: function (value) {
+			layedit.sync(editIndex);
+		}
+	});
+
+	// 备选图片编码选择
+	form.on('select(imgSrc)', function (data) {
+		var imgSrcUrlObj = $('input[name="imgSrcUrl"]')[0];
+
+		if (!data.value) {
+			imgSrcUrlObj.disabled = false;
+			layer.tips('可以自定义URL了', imgSrcUrlObj, {
+				tips: [3, 'green'], time: 3e3, end: function () {
+					$(imgSrcUrlObj).focus();
+				}
+			});
+		} else {
+			imgSrcUrlObj.disabled = true;
+			layer.tips('此时不可配置URL', imgSrcUrlObj, {
+				tips: [3, '#c95050'], time: 3e3
+			});
+		}
+	});
+
+	// 有无遮罩层
+	form.on('switch(switch)', function (data) {
+		var selectObj = $('select[name="opacity"]')[0];
+		var overlayClassNameObj = $('input[name="overlayClassName"]')[0];
+		var bgColorObj = $('#bg-input')[0];
+		var text = data.othis[0].innerText;
+		
+		// layer.msg('：' + (this.checked ? 'true' : 'false'), {
+		//     offset: '6px'
+		// });
+
+		overlayClassNameObj.disabled = bgColorObj.disabled = selectObj.disabled = text === '有遮罩层' ? false : true;
+
+		layer.tips(text, data.othis, {
+			tips: [1, '#000']
+		});
+
+		form.render('select');
+	});
+
+	// 关闭所有loading
+	$('#my-close-all').on('click.closeAll', function () {
+		$(window).loading('hideAll');
+	});
+
+	// 打开全屏loading <按配置>
+	$('#my-body').on('click.body', function () {
+		var loading = $(window).loading('show', getSetting($('form')));
+		setTimeout(function () {
+			loading.hide();
+		}, 3e3);
+	});
+
+	// 固定效果 <独立>
+	$('#my-demo').on('click.demo', function () {
+		setScrollTop($('#my-show-1')[0]);
+		var loading = $('#my-show-1').loading('show', {
+			background: 'green',
+			imgSrc: null,
+			textCss: { color: '#fff' },
+			text: '数据处理中...'
+		});
+
+		setTimeout(function () {
+			loading.hide();
+		}, 3e3);
+	});
+
+	// 重置表单
+	$('#my-reset').on('click.reset', function () {
+		layer.msg('确定重置您的配置吗？', {
+			time: 0
+			, shade: 0.5
+			, anim: 6
+			, btn: ['确定', '取消']
+			, yes: function (index) {
+				layer.close(index);
+				$('[disabled]').attr('disabled', false);
+				$('input[name="imgSrcUrl"]')[0].disabled = true;
+				setTimeout(function () {
+					$('form')[0].reset();
+				}, 50);
+			}
+		});
+	});
+
+	// 多区域loading <按配置>
+	$('#my-more').on('click.more', function () {
+		$('div.my-show-ot').loading('show', getSetting($('form')));
+		setTimeout(function () {
+			$(document).scrollTop($('div.my-show-ot').offset().top);
+			layer.tips('多区域显示效果', $('div.my-show-ot')[0], {
+				tips: [1, 'orange'], time: 4e3, tipsMore: true
+			});
+			layer.tips('多区域显示效果', $('div.my-show-ot')[1], {
+				tips: [1, 'orange'], time: 4e3, tipsMore: true
+			});
+		}, 0.2e3);
+	});
+
+	// layer显示loading <按配置>
+	$('#my-layer').on('click.layer', function () {
+		var obj = {
+			title: '身份验证',
+			user: {
+				value: 'admin',
+				title: '帐号',
+				placeholder: '请输入用户名'
+			},
+			pw: {
+				value: '123456',
+				title: '密码',
+				placeholder: '请输入密码',
+				info: '密码长度6～18位'
+			},
+			btn: {
+				submit: '提交',
+				reset: '取消'
+			}
+		};
+
+		if (!tplLogin) tplLogin = getTpl('form.tpl');
+		laytpl(tplLogin).render(obj, function (html) {
+			var index = layer.open({
+				type: 1
+				, title: obj.title
+				, shade: 0.6
+				, anim: 1
+				, btn: [obj.btn.submit, obj.btn.reset]
+				, content: html
+				, yes: function (index, obj) {
+					var loading = $('#layer-form').closest('div.layui-layer').loading('show', getSetting($('form')));
+					setTimeout(function () {
+						loading.hide();
+					}, 3e3);
+				}
+			});
+
+			layer.style(index, {
+				width: '470px'
+			});
+
+			setTimeout(function () {
+				layer.tips('点此试试', $('a.layui-layer-btn0')[0], {
+					tips: [1, 'orange'], time: 2e3
+				});
+			}, 0.5e3);
+		});
+	});
+
+	// 监听tab切换
+	element.on('tab(code-tab)', function (elem) {
+		var $cont = $(elem.elem[0]).find('.layui-tab-item:eq('+ elem.index +')');
+		var obj = $cont.find('.code')[0];
+		var $edit = $cont.find('.CodeMirror');
+		
+		!$edit.size() && codePrint(obj);
+	});
+
+	$(function () {
+		// 代码高亮默认执行
+		$('textarea.auto-code').each(function (i, obj) {
+			codePrint(obj);
+		});
+
+		// 定时生成配置信息
+		var oldOptionsStr = '';
+		setInterval(function () {
+			if (oldOptionsStr != getSetting($('form'), 'format')) {
+				$('#textarea').val(getSetting($('form'), 'format'));
+				$('#my-show-1').find('.CodeMirror').remove();
+				codePrint($('#textarea')[0]);
+				oldOptionsStr = getSetting($('form'), 'format');
+			}
+		}, 1.5e3);
+
+		$(window).on('load', function () {
+			onloadLoading.destroy();
+		});
+	});
+});

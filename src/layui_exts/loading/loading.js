@@ -336,7 +336,7 @@
 								$text[!text.length ? 'remove' : 'show']();
 								$(W).trigger(eventNameResize);
 								settings.afterShow && settings.afterShow(_this, $this);
-								$this.trigger(loadingClassName + '.' + 'show');
+								$this.trigger(loadingClassName + '.' + 'show', _this);
 							}, 0.1e3);
 						}, function (e) {
 							throw new Error(e);
