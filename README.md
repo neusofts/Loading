@@ -25,5 +25,11 @@ layui.config({
 ## 兼容
 兼容IE8+等所有浏览器，依赖jQuery。
 
+### 版本更新
+v1.0.1
+- 更新某些场景下loading计算坐标错误的bug；
+- 兼容并处理safari的position计算方法不规范导致的bug；
+- 并兼容处理IE8+、chrome、firefox、oprea、safari等浏览器；
+
 ## 相关
 [官网](http://www.neusofts.com/demo/loading/layui_exts/loading/demo/index.html)

@@ -1,6 +1,6 @@
 /**
  * 区域/全局 loading 效果<layui组件，依赖jQuery>
- * @version v1.0.0
+ * @version v1.0.1
  * @author jlx (neusofts#neusofts.com)
  * @extends {jQuery.fn.loading}
  * @param {String|Object=} arg1 调用方法名<均为空参则默认show，其他方法：toggle,hide,hideAll,destroy,destroyAll>，若为一个Object参数则更新全局配置&show<返回loading>
@@ -133,11 +133,14 @@
 				resizeAll: function () {
 					var offsetTop = this.settings && (this.settings.offsetTop || 0);
 					var $objs = $('.' + loadingClassName + ':visible');
-					var imageH = 0, $parent = {}, parentW = 0, parentH = 0, offsetP = {};
+					var imageH = 0, $parent = {}, parentW = 0, parentH = 0, isFixed, offsetP, safariBug, parentPosition;
 	
 					$objs.each(function (key, divAndimg) {
 						$parent = $(divAndimg).parent();
-						offsetP = $parent.css('position') === 'fixed' ? {top: 0, left: 0} : $parent.offset();
+						parentPosition = ('fixed,relative').indexOf($parent.css('position'));
+                        isFixed = parentPosition > -1 || $parent[0] === $(this)[0].offsetParent;
+                        safariBug = parentPosition < 0 && !document.documentMode;
+                        offsetP = isFixed /* || safariBug */ ? { top: 0, left: 0 } : { top: $parent[0].offsetTop, left: $parent[0].offsetLeft };
 						parentW = $parent.outerWidth();
 						parentH = $parent.outerHeight();
 						
