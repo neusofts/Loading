@@ -90,7 +90,13 @@
 			}
 		},
 		loadImage: function (url, callback, error) {
-			var imgObj = new Image();
+			if (!url) {
+				return callback({src: url});
+			}
+			
+			var imgObj;
+
+			imgObj = new Image();
 			imgObj.src = url;
 
 			if (imgObj.complete && callback) {
@@ -134,13 +140,18 @@
 					var offsetTop = this.settings && (this.settings.offsetTop || 0);
 					var $objs = $('.' + loadingClassName + ':visible');
 					var imageH = 0, $parent = {}, parentW = 0, parentH = 0, isFixed, offsetP, safariBug, parentPosition;
+					var isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent); // !document.documentMode;
 	
 					$objs.each(function (key, divAndimg) {
 						$parent = $(divAndimg).parent();
 						parentPosition = ('fixed,relative').indexOf($parent.css('position'));
-                        isFixed = parentPosition > -1 || $parent[0] === $(this)[0].offsetParent;
-                        safariBug = parentPosition < 0 && !document.documentMode;
-                        offsetP = isFixed /* || safariBug */ ? { top: 0, left: 0 } : { top: $parent[0].offsetTop, left: $parent[0].offsetLeft };
+						isFixed = parentPosition > -1 || $parent[0] === $(this)[0].offsetParent;
+						safariBug = parentPosition < 0 && $parent[0].offsetParent !== $('body')[0] && isSafari;
+                        // console.log(parentPosition);    // -1 -1
+                        // console.log($parent[0]);        // YS-in YS-in
+                        // console.log($(this)[0].offsetParent);   // body YS-in
+						// console.log($parent[0].offsetParent);   // body YS-out
+                        offsetP = isFixed || safariBug ? { top: 0, left: 0 } : { top: $parent[0].offsetTop, left: $parent[0].offsetLeft };
 						parentW = $parent.outerWidth();
 						parentH = $parent.outerHeight();
 						
@@ -296,7 +307,7 @@
 	
 						$(W).trigger(eventNameResize);
 					} else {
-						this.destroy('auto'), ds.loadImage(hasImgSrc ? settings.imgSrc : imgSrcArr[0], function (imgObj) {
+						this.destroy('auto'), ds.loadImage(hasImgSrc ? settings.imgSrc : null, function (imgObj) {
 							// create时不考虑动画
 							var $overlay = $('<div></div>');
 							var $image = $('<img />');
@@ -319,7 +330,7 @@
 							.css(overlayStyle)
 							.appendTo($this).hide();
 	
-							$image
+							imgObj.src && $image
 							.addClass(loadingClassName)
 							.addClass(settings.imgClassName)
 							.css(imageStyle)

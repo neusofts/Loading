@@ -28,6 +28,7 @@ layui.config({
 ### 版本更新
 v1.0.1
 - 更新某些场景下loading计算坐标错误的bug；
+- 更新无img时text加载延迟的bug；
 - 兼容并处理safari的position计算方法不规范导致的bug；
 - 并兼容处理IE8+、chrome、firefox、oprea、safari等浏览器；
 
