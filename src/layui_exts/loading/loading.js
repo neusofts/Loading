@@ -1,6 +1,6 @@
 /**
  * 区域/全局 loading 效果<layui组件，依赖jQuery>
- * @version v1.0.1
+ * @version v1.1
  * @author jlx (neusofts#neusofts.com)
  * @extends {jQuery.fn.loading}
  * @param {String|Object=} arg1 调用方法名<均为空参则默认show，其他方法：toggle,hide,hideAll,destroy,destroyAll>，若为一个Object参数则更新全局配置&show<返回loading>
@@ -12,6 +12,7 @@
  * @property {String=''} text 自定义loading文本，默认空String<非空时参考offsetTop设置>
  * @property {String=''} textCss 自定义loading文本样式，默认空String<高优先级>
  * @property {String=''} textClassName 自定义文本的className，可多个，默认空String
+ * @property {String=''} title 自定义div、img、text的title，默认空String
  * @property {Number=0} offsetTop 自定义图片+文本模式的top偏移量<text为空建议不设置offsetTop>
  * @property {Number=0|String=''|null} imgSrc 自定义loading图片路径，默认为图片序列的0索引<0-10>，可配索引或图片url路径<为null时无图片>
  * @property {Function=} beforeShow 自定义loading显示前的回调，默认空Function，参数1=this，参数2=jQuery
@@ -68,6 +69,10 @@
 	, lang = {Illegal_operation: '非法操作'} // 外部语言包模块
 	, _toString = Object.prototype.toString
 	, ds = { // 外部工具模块
+		getTime: function (arg) {
+            return arg ? (+ new Date(arg)) : (+ new Date());
+		},
+		
 		is: {
 			string: function (str) {
 				return _toString.call(str) == '[object String]';
@@ -89,6 +94,7 @@
 				return _toString.call(fun) === '[object Function]';
 			}
 		},
+		
 		loadImage: function (url, callback, error) {
 			if (!url) {
 				return callback({src: url});
@@ -120,8 +126,8 @@
 	_($.fn, {
 		loading: function () {
 			var nodeNames = 'BODY,HTML,#document,undefined'
-			, $this = nodeNames.indexOf(this[0].nodeName) > -1 ? $('body') : this // 多集合仅保留body对象
-			, isBODY = $this[0].nodeName == 'BODY'
+			, $that = nodeNames.indexOf(this[0].nodeName) > -1 ? $('body') : this // 多集合仅保留body对象
+			, isBODY = $that[0].nodeName == 'BODY'
 			, arg1 = arguments[0], arg2 = arguments[1]
 			, loadingClassName = 'lay-loading' // 注：hideAll等操作的索引，若冲突请自行改之
 			, eventNameResize = 'resize.' + loadingClassName
@@ -136,9 +142,12 @@
 				imgUrl + '-bars.gif'
 			].concat(function () { for (var arr = [], i = 0; i <= 8; i++) { arr.push(imgUrl + '-' + i + '.gif'); }; return arr; }())
 			, pteMethods = {
-				resizeAll: function () {
+				resize: function () {
+					if (!this) return;
+					
 					var offsetTop = this.settings && (this.settings.offsetTop || 0);
-					var $objs = $('.' + loadingClassName + ':visible');
+					var $objs = this.$this.children('.' + loadingClassName + ':visible');
+                    var hasImgSrc = !ds.is['undefined'](this.settings.imgSrc);
 					var imageH = 0, $parent = {}, parentW = 0, parentH = 0, isFixed, offsetP, safariBug, parentPosition;
 					var isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent); // !document.documentMode;
 	
@@ -191,6 +200,7 @@
 									left: parentW / 2 - $(divAndimg).width() / 2 + offsetP.left
 								});
 							} else {
+								imageH = hasImgSrc ? imageH : 0;
 								$(divAndimg).css({
 									top: parentH / 2 + imageH / 2 + (imageH ? 6 : ( - $(divAndimg).height() / 2)) + offsetP.top - offsetTop,
 									left: parentW / 2 - $(divAndimg).width() / 2 + offsetP.left
@@ -233,6 +243,7 @@
 				'text': '',
 				'textCss': '', // {}
 				'textClassName': '',
+				'title': '',
 				'offsetTop': 0, // img&text的top偏移量
 				'imgSrc': imgSrcArr[0],	// 注：默认以图片居中为主，若img&text同时微调可设置offsetTop
 				'beforeShow': function () {},
@@ -328,6 +339,7 @@
 							.addClass(loadingClassName)
 							.addClass(settings.overlayClassName)
 							.css(overlayStyle)
+							.attr('title', settings.title)
 							.appendTo($this).hide();
 	
 							imgObj.src && $image
@@ -335,6 +347,7 @@
 							.addClass(settings.imgClassName)
 							.css(imageStyle)
 							.attr('src', imgObj.src)
+							.attr('title', settings.title)
 							.appendTo($this).hide();
 	
 							$text
@@ -342,6 +355,7 @@
 							.addClass(settings.textClassName)
 							.css(_({}, textStyle, textCss))
 							.text(text)
+							.attr('title', settings.title)
 							.appendTo($this).hide();
 	
 							setTimeout(function () {
@@ -418,22 +432,23 @@
 					arg1.imgSrc = imgSrcArr[arg1.imgSrc];
 				}
 	
-				return $this.loading('show', _(fnName.settings, arg1));
+				return $that.loading('show', _(fnName.settings, arg1));
 			}
 	
 			// arg1为string默认调用方法 & arg2默认为局部配置
 			if (ds.is.string(arg1) || !arg1) {
-				var loading = {}, loadingArr = [];
+				var loading = {}, loadingArr = [], rdm;
 	
 				arg1 = arg1 ? arg1 : 'show';
 	
-				$this.each(function (index, obj) {
+				$that.each(function (index, obj) {
 					if (arg2) {
 						arg2.$this = $(obj);
 					} else {
 						arg2 = {$this: $(obj)};
 					}
 	
+					rdm = '.rdm' + ds.getTime() + index;
 					loading = new Class(arg2);
 					$(obj).data('loading', loading);
 					ds.is['function'](loading[arg1]) && loading[arg1]();
@@ -443,11 +458,11 @@
 					$(obj).off(eventNameClick).on(eventNameClick, '.' + loadingClassName, function () {
 						loading.settings.clickHide && $(obj).data('loading').hide();
 					});
-				});
-				
-				// 全局监听
-				$(W).off(eventNameResize).on(eventNameResize, function () {
-					pteMethods.resizeAll.call($this.data('loading'));
+
+					// resize监听
+                    $(W).off(eventNameResize + rdm).on(eventNameResize + rdm, function () {
+                        pteMethods.resize.call($(obj).data('loading'));
+                    });
 				});
 			}
 	

@@ -23,6 +23,7 @@ layui.config({
 		'text': '',
 		'textCss': '',
 		'textClassName': '',
+		'title': '',
 		'offsetTop': 0,
 		'imgSrc': 0,
 		'beforeShow': function () { layer.msg('这是 “显示之前” 的回调'); },
@@ -56,6 +57,7 @@ layui.config({
 	(index):352 7 {name: "text", value: "正在处理"}
 	(index):352 8 {name: "textCss", value: "{color: '#fff'}"}
 	(index):352 9 {name: "textClassName", value: "textclass1 textclass2"}
+	(index):352 9 {name: "title", value: ""}
 	(index):352 10 {name: "cb", value: "beforeShow"}
 	(index):352 11 {name: "cb", value: "afterShow"}
 	(index):352 12 {name: "cb", value: "afterHide"}

@@ -89,12 +89,26 @@
         <div style="padding-bottom: 30px; color: #555;">
             由于找不到一款完全符合自己需求的web-loading组件，没办法自己动手写一个得了，拓展jQuery插件，封装为layui组件。
             <br />因时间短，组件及文档可能不是很完美，大家觉得有用就用用，有问题可以邮件给我：neusofts#neusoft.com（#换成@）
-            <br /><br />版本更新：
+
+            <br /><br /><b>版本更新：</b>
+
             <br /><br /><b>v1.0.1</b>
-            <br />- 更新某些场景下loading计算坐标错误的bug；
-            <br />- 更新无img时text加载延迟的bug；
-            <br />- 兼容并处理safari的position计算方法不规范导致的bug；
-            <br />- 并兼容处理IE8+、chrome、firefox、oprea、safari等浏览器；
+
+            <br />- 更新：某些场景下loading计算坐标错误的bug；
+            <br />- 更新：无img时text加载延迟的bug；
+            <br />- 兼容：safari的position计算方法不规范导致的bug；
+            <br />- 兼容：IE8+、chrome、firefox、oprea、safari等浏览器；
+
+            <br /><br /><b>v1.1</b>
+
+            <br />- 新增：title配置，自定义div、img、text的hover显示内容；
+            <br />- 修复：resize方法的处理逻辑及性能；
+            <br />- 修复：有无img、text场景下的坐标计算错误bug；
+            <br />- 兼容：IE8+、chrome、firefox、oprea、safari等浏览器；
+
+            <br /><br /><b>v1.2 未来版本</b>
+            <br />- 待新增：自定义div对象（CSS3场景）；
+            <br />- 待处理：因img预加载导致loading显示延迟的问题；
         </div>
     </div>
     
@@ -194,8 +208,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">图片路径</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="imgSrcUrl" lay-verify="imgSrcUrl" disabled style="width: 400px"
-                        placeholder="自定义路径URL" class="layui-input">
+                    <input type="text" name="imgSrcUrl" lay-verify="imgSrcUrl" disabled style="width: 400px" placeholder="自定义路径URL" class="layui-input">
                 </div>
                 <div class="layui-form-mid layui-word-aux">注：默认备选编号为0，值为null时无图片，<span style="color:red">推荐：</span>https://loading.io，不考虑IE可使用svg格式文件</div>
             </div>
@@ -268,6 +281,14 @@
             </div>
 
             <div class="layui-form-item">
+                <label class="layui-form-label" title="新增配置项"><span class="layui-badge-dot"></span> hover提示</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="title" placeholder="默认为空" class="layui-input" style="width: 400px;">
+                </div>
+                <div class="layui-form-mid layui-word-aux">注：默认为空字符串，自定义div、img、text的hover提示</div>
+            </div>
+
+            <div class="layui-form-item">
                 <label class="layui-form-label">动画时长</label>
                 <div class="layui-input-inline">
                     <input type="number" name="animateTime" value="600" placeholder="默认为600" class="layui-input">
@@ -327,6 +348,7 @@ options = {
     , text: ''                      // 类型String，自定义loading文本，默认空String，注：非空时参考offsetTop设置
     , textCss: {}                   // 类型Object，自定义loading文本样式，默认空{}
     , textClassName: ''             // 类型String，自定义文本的className，可多个，默认空String
+    , title: ''                     // 类型String，自定义div、img、text的title，默认空String
     , offsetTop: 0                  // 类型Number，自定义图片+文本模式的top偏移量，注：text为空时无需设置offsetTop
     , imgSrc: 0                     // 类型String|null|Number，自定义loading图片，默认为图片序列的0索引（共0-10），可自定义url路径，注：为null时无图片
     , beforeShow: function () {}    // 类型Function，自定义loading显示前的回调，默认空Function，参数1=this，参数2=jQuery
