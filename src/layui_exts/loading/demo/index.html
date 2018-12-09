@@ -11,8 +11,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="../../../layui/css/layui.css?v=v2.4.3" media="all">
-    <link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
-    <link rel=stylesheet href="https://codemirror.net/theme/eclipse.css">
     <style>
         body {
             margin: 0;
@@ -38,7 +36,7 @@
         }
 
         .layout .my-fixed button {
-            margin-right: 2em;
+            margin-right: .5em;
             margin-top: 16px;
         }
 
@@ -77,11 +75,30 @@
         .layout .CodeMirror {
             height: auto;
         }
+
+        .my-radius:hover {
+            background: #028073;
+        }
+
+        .my-radius {
+            background: #009688;
+            border-radius: 50%;
+            position: absolute;
+            right: 100px;
+            top: 100px;
+            height: 150px;
+            width: 150px;
+            line-height: 150px;
+            text-align: center;
+            color: white;
+            cursor: default;
+            font-size: 20px;
+        }
     </style>
 </head>
 
 <body>
-    <div class="layout">
+    <div class="layout" id="in-loading">
         <fieldset class="layui-elem-field layui-field-title">
             <legend>前言</legend>
         </fieldset>
@@ -92,23 +109,33 @@
 
             <br /><br /><b>版本更新：</b>
 
-            <br /><br /><b>v1.0.1</b>
+            <br /><br /><b>v2.0</b>（未来版本）
+            <br />- 待新增：自定义div对象（CSS3场景）； 
+            <br />- 待处理：因img预加载导致loading显示延迟的问题；
 
-            <br />- 更新：某些场景下loading计算坐标错误的bug；
-            <br />- 更新：无img时text加载延迟的bug；
-            <br />- 兼容：safari的position计算方法不规范导致的bug；
-            <br />- 兼容：IE8+、chrome、firefox、oprea、safari等浏览器；
+            <br /><br /><b>v1.3</b>（最新版）
+            <br />- 修复：父节点移除后导致loading实例报错的bug；
+            <br />- 修复：afterHideAll默认覆盖全局配置，以最后调用为基准；
+            <br />- 增强：img和text样式初始化设置；
+            <br />- 新增：inheritRadius参数，是否继承父节点边框的值；
+            <br />- 新增：文档的几个示例；
 
-            <br /><br /><b>v1.1</b>
-
+            <br /><br /><b>v1.2</b>
             <br />- 新增：title配置，自定义div、img、text的hover显示内容；
             <br />- 修复：resize方法的处理逻辑及性能；
             <br />- 修复：有无img、text场景下的坐标计算错误bug；
             <br />- 兼容：IE8+、chrome、firefox、oprea、safari等浏览器；
 
-            <br /><br /><b>v1.2 未来版本</b>
-            <br />- 待新增：自定义div对象（CSS3场景）；
-            <br />- 待处理：因img预加载导致loading显示延迟的问题；
+            <br /><br /><b>v1.1</b>
+            <br />- 更新：某些场景下loading计算坐标错误的bug；
+            <br />- 更新：无img时text加载延迟的bug；
+            <br />- 兼容：safari的position计算方法不规范导致的bug；
+            <br />- 兼容：IE8+、chrome、firefox、oprea、safari等浏览器；
+
+            <br /><br /><b>v1.0</b>
+            <br />- 发布：组件发布
+            
+            <div class="my-radius" id="my-radius" title="同时展示：圆角边框继承效果">查看文档</div>
         </div>
     </div>
     
@@ -168,6 +195,15 @@
                         </select>
                     </div>
                     <div class="layui-form-mid layui-word-aux">注：opacity为0时无遮罩层</div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label" title="新增配置项"><span class="layui-badge-dot"></span> 边框继承</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="inheritRadius" value="1" title="继承">
+                        <input type="radio" name="inheritRadius" value="0" checked title="不继承">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">注：自定义遮罩层是否继承父节点的边框效果，默认false</div>
                 </div>
             </div>
 
@@ -255,7 +291,7 @@
                     <input type="checkbox" name="cb" value="afterHide" title="隐藏后">
                     <input type="checkbox" name="cb" value="afterHideAll" title="全部隐藏后">
                 </div>
-                <div class="layui-form-mid layui-word-aux">注：“隐藏后”的回调同样对“销毁”有效</div>
+                <div class="layui-form-mid layui-word-aux">注：“隐藏后”的回调同样对“销毁”有效（全部隐藏的回调默认覆盖全局配置，最后配置及调用者优先级最高）</div>
             </div>
 
             <div class="layui-form-item my-margin">
@@ -318,26 +354,29 @@
 
             <div class="layui-form-item my-fixed">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit="" lay-filter="my-submit">预览配置效果</button>
-                    <button class="layui-btn layui-btn-danger" id="my-reset">重置全部设置</button>
-                    <button class="layui-btn layui-btn-normal" id="my-close-all">关闭所有Loading</button>
-                    <button class="layui-btn layui-btn-primary" id="my-body">按配置全屏loading(3s)</button>
-                    <button class="layui-btn layui-btn-primary" id="my-layer">按配置layer中loading</button>
-                    <button class="layui-btn layui-btn-primary" id="my-more">按配置多个区域loading</button>
-                    <button class="layui-btn layui-btn-warm" id="my-demo">固定效果loading</button>
+                    <button class="layui-btn layui-anim" data-anim="upbit" lay-submit="" lay-filter="my-submit">预览配置</button>
+                    <button class="layui-btn layui-btn-danger layui-anim" data-anim="rotate" id="my-reset">重置设置</button>
+                    <button class="layui-btn layui-btn-normal layui-anim" data-anim="fadeout" id="my-close-all">关闭所有</button>
+                    <button class="layui-btn layui-btn-primary layui-anim" data-anim="scaleSpring" id="my-body">按配置全屏(3s)</button>
+                    <button class="layui-btn layui-btn-primary layui-anim" data-anim="scaleSpring" id="my-layer">按配置layer(5s)</button>
+                    <button class="layui-btn layui-btn-primary layui-anim" data-anim="scaleSpring" id="my-more">按配置多区域</button>
+                    <button class="layui-btn layui-btn-primary" id="my-upload">上传按钮</button>
+                    <button class="layui-btn layui-btn-primary layui-anim" data-anim="scaleSpring" id="my-in-loading">叠加嵌套</button>
+                    <button class="layui-btn layui-btn-primary" id="my-date">日期控件</button>
+                    <button class="layui-btn layui-btn-warm layui-anim" data-anim="up" id="my-demo">Text效果</button>
                 </div>
             </div>
         </form>
     </div>
 
-    <div class="layout">
+    <div class="layout" id="my-doc">
         <fieldset class="layui-elem-field layui-field-title">
-            <legend>全局配置</legend>
+            <legend>全局配置及使用文档</legend>
         </fieldset>
         <div style="margin-bottom: 10px;">
 <textarea class="code auto-code">
-/* 更新全局配置 并执行 show方法 */
-$(element).loading({ /* 全局配置 */ });
+$(element).loading();        // 此方式 “仅调用show方法”
+$(element).loading({ ... }); // 重要提示：此方式会更新 “全局配置 + 执行show方法”
 
 // 配置说明
 options = {
@@ -359,6 +398,7 @@ options = {
     , afterHideAll: function () {}  // 类型Function，自定义全部loading隐藏/销毁后的回调，默认空Function，参数1=this，参数2=jQuery，参数3=$loading(销毁时无参数3)
     , animateTime: 600              // 类型Number，自定义loading显示/隐藏的动画时长，默认600毫秒，注：为0时无动画
     , clickHide: false              // 类型Boolean，自定义单击loading遮罩层/图片/文字是否隐藏loading，默认false
+    , inheritRadius: false          // 类型Boolean，自定义遮罩层是否继承父节点的边框效果，默认false
 }</textarea>
         </div>
     </div>
@@ -417,7 +457,7 @@ var loading = $(element).loading('show', {
                 </div>
                 <div class="layui-tab-item">
 <textarea class="code">
-// loading全部隐藏之后的回调
+// loading全部隐藏之后的回调（注：全部隐藏的回调默认覆盖全局配置，最后配置及调用者优先级最高）
 var loading = $(element).loading('show', {
     /* 私有配置 */
     afterHideAll: function (loading, $obj, $loading?) {
@@ -555,7 +595,10 @@ $(element).on('lay-loading.destroyAll', function (event, loadingObj) {
 </body>
 
 <script src="../../../layui/layui.all.js?v=v2.4.3" charset="utf-8"></script>
-<script src="../index.js?v=v1.0.0" charset="utf-8"></script>
+<script src="../index.js?v=v1.3" charset="utf-8"></script>
+
+<link rel=stylesheet href="http://codemirror.net/lib/codemirror.css">
+<link rel=stylesheet href="https://codemirror.net/theme/eclipse.css">
 
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <script src="http://codemirror.net/mode/xml/xml.js"></script>

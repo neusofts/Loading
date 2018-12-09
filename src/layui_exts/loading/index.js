@@ -1,5 +1,5 @@
 layui.config({
-	version: 'v2.4.3',
+	version: 'v2.4.3-v1.3',
 	debug: true,
 	base: '../js/'
 }).extend({
@@ -33,7 +33,8 @@ layui.config({
 		'afterHide': function () { layer.msg('这是 “隐藏之后” 的回调'); },
 		'afterHideAll': function () { layer.msg('这是 “全部隐藏之后” 的回调'); },
 		'animateTime': 600,
-		'clickHide': 0
+		'clickHide': 0,
+		'inheritRadius': 0
 	}
 	, onloadLoading = $(window).loading('show', {
 		"opacity": 0.7,
@@ -41,6 +42,12 @@ layui.config({
 		"text": "正在加载第三方高亮组件...",
 		"textCss": {
 			"color": "#666"
+		},
+		'afterShow': function () {
+			// 测试：无高亮组件
+			// window.onload = new function () {
+			// 	onloadLoading.destroy();
+			// };
 		},
 		"afterHide": function () { layer.msg('页面加载完成，请开始吧！'); },
 		"offsetTop": 16
@@ -58,6 +65,7 @@ layui.config({
 	(index):352 8 {name: "textCss", value: "{color: '#fff'}"}
 	(index):352 9 {name: "textClassName", value: "textclass1 textclass2"}
 	(index):352 9 {name: "title", value: ""}
+	(index):352 9 {name: "inheritRadius", value: false}
 	(index):352 10 {name: "cb", value: "beforeShow"}
 	(index):352 11 {name: "cb", value: "afterShow"}
 	(index):352 12 {name: "cb", value: "afterHide"}
@@ -210,13 +218,24 @@ layui.config({
 		}
 	});
 
-	// 日期
-	laydate.render({
-		elem: '#date'
-	});
-
-	laydate.render({
-		elem: '#date1'
+	// 日期控件
+	$('#my-date').on('click.date', function () {
+		laydate.render({
+			elem: '#my-date',
+			show: true,
+			value: new Date(),
+			isInitValue: false,
+			format: '今天是：yyyy年MM月dd日',
+			ready: function () {
+				$('div.layui-laydate').loading('show', {
+					background: '#000',
+					imgSrc: null,
+					opacity: 0.5,
+					text: '示例：暂停选择日期',
+					textCss: {color: '#fff'}
+				});
+			}
+		});
 	});
 
 	// 创建一个编辑器
@@ -280,6 +299,79 @@ layui.config({
 		form.render('select');
 	});
 
+	// 上传按钮 <独立>
+	// var uploadLoading = function () {
+		$('#my-upload').on('click.upload', function () {
+			$(this).loading('show', {
+				title: '文件上传中，请稍候...（单击退出）',
+				clickHide: true
+			});
+		});
+	// }; uploadLoading();
+
+	// 圆形loading
+	$('#my-radius').on('click.radius', function () {
+		$(this).loading('show', {
+			imgSrc: null,
+			background: '#000',
+			text: '继承了父节点边框哦<br>支持br换行哦<br>2秒后跳转...',
+			textCss: {color: '#fff', 'font-size': '12px'},
+			inheritRadius: true,
+			opacity: 0.7,
+			clickHide: true
+		});
+
+		setTimeout(function () {
+			setScrollTop($('#my-doc')[0]);
+		}, 2e3);
+	});
+
+	// loading in loading
+	$('#my-in-loading').on('click.in.loading', function () {
+		var $obj = $('#in-loading');
+		var claName = 'div.lay-loading';
+		
+		setScrollTop($obj[0]);
+
+		$obj.loading('show', {
+			imgSrc: null,
+			background: 'green',
+			text: '这是第一层loading...',
+			textCss: {color: '#fff'},
+			inheritRadius: true,
+			clickHide: true
+		});
+
+		setTimeout(function () {
+			$obj.children(claName).loading('show', {
+				background: 'orange',
+				inheritRadius: true,
+				clickHide: true,
+				imgSrc: null,
+				offsetTop: -30,
+				textCss: {color: '#fff'},
+				text: '这是第二层loading，我已偏移30px哦'
+			});
+		}, 1e3);
+
+		setTimeout(function () {
+			$obj.children(claName).children(claName).loading('show', {
+				background: 'blue',
+				inheritRadius: true,
+				clickHide: true,
+				imgSrc: null,
+				offsetTop: -60,
+				textCss: {color: '#fff'},
+				text: '这是第三层loading，我已偏移60px哦，连续单击关闭'
+			});
+		}, 2e3);
+	});
+
+	// 监听window的hideAll事件
+	// $(window).on('lay-loading.hideAll', function () {
+	// 	uploadLoading();
+	// });
+
 	// 关闭所有loading
 	$('#my-close-all').on('click.closeAll', function () {
 		$(window).loading('hideAll');
@@ -296,16 +388,12 @@ layui.config({
 	// 固定效果 <独立>
 	$('#my-demo').on('click.demo', function () {
 		setScrollTop($('#my-show-1')[0]);
-		var loading = $('#my-show-1').loading('show', {
+		$('#my-show-1').loading('show', {
 			background: 'green',
 			imgSrc: null,
 			textCss: { color: '#fff' },
 			text: '数据处理中...'
 		});
-
-		setTimeout(function () {
-			loading.hide();
-		}, 3e3);
 	});
 
 	// 重置表单
@@ -416,8 +504,20 @@ layui.config({
 			}
 		}, 1.5e3);
 
-		$(window).on('load', function () {
+		// 加载高亮组件loading
+		window.onload = new function () {
 			onloadLoading.destroy();
+		};
+
+		// btns animate
+		$('button[data-anim]').on('click.anim', function (e) {
+			var animPre = 'layui-anim-';
+			var $obj = $(this);
+			var animClass = animPre + $obj.data('anim');
+			$obj.addClass(animClass);
+			setTimeout(function () {
+				$obj.removeClass(animClass);
+			}, 2e3);
 		});
 	});
 });

@@ -1,6 +1,6 @@
 /**
  * 区域/全局 loading 效果<layui组件，依赖jQuery>
- * @version v1.1
+ * @version v1.3 最新版
  * @author jlx (neusofts#neusofts.com)
  * @extends {jQuery.fn.loading}
  * @param {String|Object=} arg1 调用方法名<均为空参则默认show，其他方法：toggle,hide,hideAll,destroy,destroyAll>，若为一个Object参数则更新全局配置&show<返回loading>
@@ -23,6 +23,7 @@
  * @property {Function=} afterHideAll 自定义全部loading隐藏/销毁后的回调，默认空Function，参数1=this，参数2=jQuery，参数3=$loading(销毁时无参数3)
  * @property {Number=600} animateTime 自定义loading显示/隐藏的动画时长 <为0时无动画>，默认600
  * @property {Boolean=false} clickHide 自定义单击loading遮罩层/图片/文字是否隐藏loading，默认false
+ * @property {Boolean=false} inheritRadius 自定义遮罩层是否继承父节点的边框效果，默认false
  * @event hide,hideAll,destroy,destroyAll 均监听$(obj)的lay-loading(.hide | .hideAll | .destroy | .destroyAll)事件，参数event, loadingObj
  * @return {Object|jQuery|Object<Array>} 返回<loading | loadingArr | jQuery | Error>对象
  * @example
@@ -143,7 +144,7 @@
 			].concat(function () { for (var arr = [], i = 0; i <= 8; i++) { arr.push(imgUrl + '-' + i + '.gif'); }; return arr; }())
 			, pteMethods = {
 				resize: function () {
-					if (!this) return;
+					if (!this || !this instanceof $) return;
 					
 					var offsetTop = this.settings && (this.settings.offsetTop || 0);
 					var $objs = this.$this.children('.' + loadingClassName + ':visible');
@@ -221,6 +222,10 @@
 					var operate = arguments[2];
 					var method = arguments[3];
 					var isAuto = arguments[4];
+
+					if (arguments[1] === 'afterHideAll') {
+						fn = fnName.settings.afterHideAll;
+					}
 	
 					$loading.fadeOut(time, function () {
 						$(this)[operate]();
@@ -253,10 +258,27 @@
 				'afterHide': function () {},
 				'afterHideAll': function () {},
 				'animateTime': 600,
-				'clickHide': !1 //可配置afterHide为reload需求
+				'clickHide': !1, //可配置afterHide为reload需求
+				'inheritRadius': false
 			}
-	
-			var overlayStyle = {
+
+			var initialCss = {
+				'top': -zIndex,
+				'left': -zIndex,
+				'z-index': 0,
+				'position': 'absolute',
+				'padding': 'initial',
+				'margin': 'initial',
+				'border': 'initial',
+				'width': 'initial',
+				'min-width': 'initial',
+				'max-width': 'initial',
+				'height': 'initial',
+				'min-height': 'initial',
+				'max-height': 'initial',
+				'opacity': 'initial'
+			}
+			, overlayStyle = {
 				'background': '#fff',
 				'height': 0, // resize value
 				'width': 0,  // resize value
@@ -264,21 +286,21 @@
 				'left': 0,   // resize value <html除外, 子标签在body内>
 				'z-index': 0,
 				'opacity': 0,
-				'position': 'absolute'
-			}
-			, imageStyle = {
-				'left': -zIndex,  // resize value
-				'top': -zIndex,   // resize value
-				'z-index': 0,
-				'position': 'absolute'
-			}
-			, textStyle = {
-				'top': -zIndex,
-				'left': -zIndex,
-				'z-index': 0,
 				'position': 'absolute',
-				'white-space': 'nowrap'
-			};
+				'border-radius': 0,
+				'padding': 'initial',
+				'margin': 'initial',
+				'border': 'initial'
+			}
+			, imageStyle = _({}, initialCss)
+			, textStyle = _({}, initialCss, {
+				'background': 'initial',
+				'overflow': 'initial',
+				'white-space': 'nowrap',
+				'line-height': '120%',
+				'text-align': 'center',
+				'vertical-align': 'middle'
+			});
 	
 			function Class(options) {
 				if (options && options.imgSrc !== null && ds.is.number(options.imgSrc)) {
@@ -332,6 +354,13 @@
 							overlayStyle['opacity'] = settings['opacity'];
 							overlayStyle['height'] = overlayH;
 							overlayStyle['width'] = overlayW;
+							if (settings.inheritRadius) {
+								// For IE
+								overlayStyle['border-top-left-radius'] = $this.css('border-top-left-radius');
+								overlayStyle['border-top-right-radius'] = $this.css('border-top-right-radius');
+								overlayStyle['border-bottom-left-radius'] = $this.css('border-bottom-left-radius');
+								overlayStyle['border-bottom-right-radius'] = $this.css('border-bottom-right-radius');
+							}
 							imageStyle['z-index'] = settings['imgZIndex'];
 							textStyle['z-index'] = settings['imgZIndex'];
 	
@@ -354,7 +383,7 @@
 							.addClass(loadingClassName)
 							.addClass(settings.textClassName)
 							.css(_({}, textStyle, textCss))
-							.text(text)
+							.html(text)
 							.attr('title', settings.title)
 							.appendTo($this).hide();
 	
@@ -444,6 +473,10 @@
 				$that.each(function (index, obj) {
 					if (arg2) {
 						arg2.$this = $(obj);
+
+						if (arg2.afterHideAll) {
+							fnName.settings.afterHideAll = arg2.afterHideAll;
+						}
 					} else {
 						arg2 = {$this: $(obj)};
 					}
@@ -455,13 +488,15 @@
 					loadingArr.push(loading);
 	
 					// 单击div/img/text是否隐藏
-					$(obj).off(eventNameClick).on(eventNameClick, '.' + loadingClassName, function () {
+					$(obj).off(eventNameClick).on(eventNameClick, '.' + loadingClassName, function (e) {
 						loading.settings.clickHide && $(obj).data('loading').hide();
+						e.stopPropagation();
+						return false;
 					});
 
 					// resize监听
                     $(W).off(eventNameResize + rdm).on(eventNameResize + rdm, function () {
-                        pteMethods.resize.call($(obj).data('loading'));
+                        pteMethods.resize.call($(obj).data('loading') || null);
                     });
 				});
 			}
