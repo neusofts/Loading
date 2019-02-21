@@ -127,7 +127,7 @@
 	_($.fn, {
 		loading: function () {
 			var nodeNames = 'BODY,HTML,#document,undefined'
-			, $that = nodeNames.indexOf(this[0].nodeName) > -1 ? $('body') : this // 多集合仅保留body对象
+			, $that = !this[0] || nodeNames.indexOf(this[0].nodeName) > -1 ? $('body') : this // 多集合仅保留body对象
 			, isBODY = $that[0].nodeName == 'BODY'
 			, arg1 = arguments[0], arg2 = arguments[1]
 			, loadingClassName = 'lay-loading' // 注：hideAll等操作的索引，若冲突请自行改之
@@ -287,6 +287,7 @@
 				'z-index': 0,
 				'opacity': 0,
 				'position': 'absolute',
+				'border': '1px solid transparent',
 				'border-radius': 0,
 				'padding': 'initial',
 				'margin': 'initial',
