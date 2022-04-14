@@ -1,5 +1,5 @@
 ## 概要
-由于找不到一款完全符合自己需求的web-loading组件，没办法自己动手写一个得了，拓展jQuery插件，封装为layui组件。因时间短，组件及文档可能不是很完美，大家觉得有用就用用，有问题可以邮件给我：neusofts#neusoft.com（#换成@）
+由于找不到一款完全符合自己需求的web-loading组件，没办法自己动手写一个得了，拓展jQuery插件，封装为layui组件。因时间短，组件及文档可能不是很完美，大家觉得有用就用用，有问题可以邮件给我：neusofts#neusofts.com（#换成@，一直没注意，之前留的邮箱少了一个s，晕）
 
 ### 目录
 ```
@@ -17,7 +17,8 @@ layui.config({
   loading: 'loading/loading'
 }).use(['jquery', 'loading'], function() {
   var $ = layui.$;
-  // 详见文档及演示：http://www.neusofts.com/demo/loading/layui_exts/loading/demo/index.html
+  // 详见文档及演示：https://www.neusofts.com/demo/loading/layui_exts/loading/demo/index.html
+  // 一般为https协议，若无法打开，可尝试http
 });
 
 ```
@@ -54,4 +55,4 @@ v1.0
 - 发布：组件发布
 
 ## 相关链接
-[文档及演示](http://www.neusofts.com/demo/loading/layui_exts/loading/demo/index.html)
+[文档及演示](https://www.neusofts.com/demo/loading/layui_exts/loading/demo/index.html)
