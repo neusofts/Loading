@@ -506,7 +506,9 @@ layui.config({
 
 		// 加载高亮组件loading
 		window.onload = new function () {
-			onloadLoading.destroy();
+			setTimeout(function () {
+				onloadLoading.destroy();
+			}, 1e3);
 		};
 
 		// btns animate
